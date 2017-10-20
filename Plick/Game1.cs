@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 
 namespace Plick
 {
@@ -11,6 +12,10 @@ namespace Plick
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Rectangle visRect;
+        Camera2d Camera;
+
+        Player player;
 
         public Game1()
         {
@@ -18,8 +23,8 @@ namespace Plick
             Content.RootDirectory = "Content";
 
             graphics.IsFullScreen = true;
-            graphics.PreferredBackBufferWidth = 800;
-            graphics.PreferredBackBufferHeight = 480;
+            graphics.PreferredBackBufferWidth = 480;
+            graphics.PreferredBackBufferHeight = 480 /** (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width)*/;
             graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
         }
 
@@ -31,8 +36,9 @@ namespace Plick
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
+            Camera = new Camera2d(GraphicsDevice.Viewport, 3200, 3200, 1);
+            Camera.Pos = new Vector2(0, 0);
+            visRect = new Rectangle(GraphicsDevice.Viewport.Width / 4, GraphicsDevice.Viewport.Height / 4, GraphicsDevice.Viewport.Width/2, GraphicsDevice.Viewport.Height/2);
             base.Initialize();
         }
 
@@ -45,7 +51,7 @@ namespace Plick
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            player = new Player(new Vector2(100, 100), Content.Load<Texture2D>("PlickTheFish"));
         }
 
         /// <summary>
@@ -66,9 +72,9 @@ namespace Plick
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 Exit();
-
-            // TODO: Add your update logic here
-
+            player.update();
+            MoveCam();
+            Touch();
             base.Update(gameTime);
         }
 
@@ -78,11 +84,56 @@ namespace Plick
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.MidnightBlue);
 
-            // TODO: Add your drawing code here
+            spriteBatch.Begin(SpriteSortMode.BackToFront,
+                    null, null, null, null, null,
+                    Camera.GetTransformation());
 
+            //spriteBatch.Begin();
+
+            player.Draw(spriteBatch);
+
+            spriteBatch.End();
             base.Draw(gameTime);
         }
+
+        public void MoveCam()
+        {
+            if (!visRect.Contains(player.rotPos))
+            {
+                if (visRect.X > player.rotPos.X)
+                {
+                    visRect.X = (int)player.rotPos.X;
+                }
+                else if(visRect.X+visRect.Width < player.rotPos.X)
+                {
+                    visRect.X = (int)player.rotPos.X;
+                }
+
+                if (visRect.Y > player.rotPos.Y)
+                {
+                    visRect.Y = (int)player.rotPos.Y;
+                }
+                else if (visRect.Y + visRect.Height < player.rotPos.Y)
+                {
+                    visRect.Y = (int)player.rotPos.Y;
+                }
+            }
+        }
+
+        public void Touch()
+        {
+            TouchCollection touchCollection = TouchPanel.GetState();
+            if (touchCollection.Count > 0)
+            {
+                if (touchCollection[0].State == TouchLocationState.Released)
+                {
+                }
+
+            }
+                    
+        }
+
     }
 }

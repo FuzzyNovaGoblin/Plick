@@ -12,7 +12,7 @@ using Android.Widget;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace PB_and_Ball
+namespace Plick
 {
     public class Camera2d
     {

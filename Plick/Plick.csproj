@@ -63,7 +63,9 @@
   <ItemGroup>
     <Compile Include="Activity1.cs" />
     <Compile Include="Camera2D.cs" />
+    <Compile Include="DPad.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="Ref.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
