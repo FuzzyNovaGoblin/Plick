@@ -15,23 +15,13 @@ using Org.Json;
 using Newtonsoft.Json;
 using System.IO;
 using Android.Util;
+using System.Threading.Tasks;
 
 namespace Plick
 {
     class Ref
     {
-        public static Dictionary<int, Texture2D> tileTypes;
         public static List<Tile> tileList = new List<Tile>();
-
-        public static void CreateTypes(Context context)
-        {
-            string response;
-
-            StreamReader strm = new StreamReader(context.Assets.Open("map.json"));
-            response = strm.ReadToEnd();
-
-            JSONObject jSON = new JSONObject(response);
-            Log.Debug("json", jSON.ToString());
-        }
+        public static Tile[][] tileArray;
     }
 }
