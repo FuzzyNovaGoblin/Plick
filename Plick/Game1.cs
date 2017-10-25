@@ -1,3 +1,4 @@
+using Android.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -17,14 +18,17 @@ namespace Plick
 
         Player player;
 
+        JoyStick joyStick;
+
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
             graphics.IsFullScreen = true;
-            graphics.PreferredBackBufferWidth = 480;
-            graphics.PreferredBackBufferHeight = 480 /** (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width)*/;
+            graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
         }
 
@@ -51,7 +55,9 @@ namespace Plick
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            player = new Player(new Vector2(100, 100), Content.Load<Texture2D>("PlickTheFish"));
+            joyStick = new JoyStick(Content.Load<Texture2D>("joyStickBase"), Content.Load<Texture2D>("joyStickTop"));
+
+             player = new Player(new Vector2(100, 100), Content.Load<Texture2D>("PlickTheFish"));
         }
 
         /// <summary>
@@ -73,7 +79,8 @@ namespace Plick
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 Exit();
             player.update();
-            MoveCam();
+            //MoveCam();
+            joyStick.Update();
             Touch();
             base.Update(gameTime);
         }
@@ -90,9 +97,9 @@ namespace Plick
                     null, null, null, null, null,
                     Camera.GetTransformation());
 
-            //spriteBatch.Begin();
 
             player.Draw(spriteBatch);
+            joyStick.Draw(spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);
@@ -127,8 +134,11 @@ namespace Plick
             TouchCollection touchCollection = TouchPanel.GetState();
             if (touchCollection.Count > 0)
             {
+                
                 if (touchCollection[0].State == TouchLocationState.Released)
                 {
+                    Camera.Move(new Vector2(10, 10));
+                    Log.Debug("Position: ", touchCollection[0].Position.ToString());
                 }
 
             }
